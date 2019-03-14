@@ -1,0 +1,38 @@
+
+monitor RequestHandler
+{
+	// Create Update event
+	dictionary<string, Update> requestsToDo := {
+		// content type
+		"contentTypeXML": Update(0, new dictionary<string, string>, new dictionary<string, string>, "application/xml", "utf8", ""),
+		// charset 
+		"charsetUTF8": Update(0, new dictionary<string, string>, new dictionary<string, string>, "TEXT/PLAIN", "utf8", ""),
+		// cookie 
+		"setCookieHeader": Update(0, {"set-cookie": "foo=bar"}, {"baz":"quux"}, "text/plain", "iso8859-1", "")
+	};
+	
+	action onload() {
+		spawn receiver() to context("receiver");
+	}
+
+	// handles requests from the server chain
+	action receiver() {
+		monitor.subscribe("requests");
+
+		on all RequestUpdate() as ru {
+			// just return the data for the requested update
+			try{
+				print ru.toString();
+				Update u := requestsToDo[<string>ru.payload].clone();
+				u.requestId := ru.requestId;
+				u.payload := ru.payload;
+				log "Updated data. " at INFO;
+				send Success(ru.requestId, "Successfully updated data : "+u.toString()) to ru.channel;
+			} catch (com.apama.exceptions.Exception e) {
+				send Error(ru.requestId, 500, "Error handling update: "+e.getMessage()) to ru.channel;
+			}			
+		}
+		com.softwareag.connectivity.ConnectivityPlugins.onApplicationInitialized();
+	}
+
+}

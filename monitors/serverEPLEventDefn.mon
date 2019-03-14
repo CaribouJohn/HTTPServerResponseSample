@@ -1,0 +1,39 @@
+/** Event for updating an existing object in the DB. Responds with Success, or Error if the object doesn't exist. */
+event RequestUpdate {
+	/** Request ID of the corresponding request object. */
+	integer requestId;
+	/** Channel to respond on. */
+	string channel;
+	/** request payload */
+	any payload;
+}
+
+/** event to create an Update*/
+event Update {
+	integer requestId;
+	dictionary<string, string> headers;
+	dictionary<string, string> cookies;
+	string contentType;
+	string charset;
+	any payload;
+}
+
+/** Indicates the requested operation succeeded. */
+event Success
+{
+	/** Request ID of the corresponding request object. */
+	integer requestId;
+	/** Success Message*/
+	string message;
+}
+
+/** Indicates the requested operation failed. */
+event Error
+{
+	/** Request ID of the corresponding request object. */
+	integer requestId;
+	/** Error code. */
+	integer code;
+	/** Message describing the error. */
+	string message;
+}
