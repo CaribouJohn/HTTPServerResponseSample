@@ -18,4 +18,4 @@ N.B. It is assumed you have an installation of Apama and that the environment ha
   
 This should show a screen similar to the one below
 
-![Alt text](images/main.png?raw=true "Browser view")
+![Alt text](images/main.PNG?raw=true "Browser view")
