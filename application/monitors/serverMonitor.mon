@@ -1,0 +1,51 @@
+
+
+/** Event for updating an existing object in the DB. Responds with Success, or Error if the object doesn't exist. */
+event MoodEvent {
+	/** Request ID of the corresponding request object. */
+	integer requestId;
+	/** Channel to respond on. */
+	string channel;
+	/** request payload */
+	integer moodId;
+}
+
+/** Indicates the requested operation succeeded. */
+event Success
+{
+	/** Request ID of the corresponding request object. */
+	integer requestId;
+	/** Success Message*/
+	string message;
+	integer count;
+}
+
+
+monitor RequestHandler
+{
+	integer counter := 0;
+	action onload() {
+		spawn receiver() to context("receiver");
+	}
+
+	// handles requests from the server chain
+	action receiver() {
+		monitor.subscribe("requests");
+		on all MoodEvent() as mood {
+			counter := counter + 1;
+			if ( mood.moodId = 0 )
+			{
+				// just return the data for the requested update
+				send Success(mood.requestId,"HAPPY",counter) to mood.channel;
+			} else if ( mood.moodId = 1 ) {
+				// just return the data for the requested update
+				send Success(mood.requestId,"SAD",counter) to mood.channel;
+			} else {
+				// just return the data for the requested update
+				send Success(mood.requestId,"ANGRY",counter) to mood.channel;
+			}
+		}
+		
+	}
+
+}
