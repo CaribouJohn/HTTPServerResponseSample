@@ -23,32 +23,31 @@ dynamicChainManagers:
                  file: ${PARENT_DIR}/swagger_HTTPServer.json
                  contentType: application/json
                  charset: UTF-8
+             /index.html:
+                 file: html/index.html
+                 contentType: text/html
+                 charset: UTF-8
 
 dynamicChains:
   httpServer:
     - apama.eventMap:
-        defaultEventType: RequestUpdate
+        defaultEventType: MoodEvent
         defaultChannel: requests
     - mapperCodec:
         "*":
           towardsHost:
             mapFrom:
-              - payload.payload: payload
               - payload.requestId: metadata.requestId
             defaultValue:
               - payload.channel: "@{httpServer.responseChannel}"
           towardsTransport:
               mapFrom:
-                - metadata.http.cookies: payload.cookies
-                - metadata.http.headers: payload.headers
-                - metadata.contentType: payload.contentType
-                - metadata.charset: payload.charset
                 - metadata.requestId: payload.requestId
-                - payload: payload.payload
               defaultValue:
                 - metadata.http.statusCode: 200
 
     - diag: { tag: serverside }
+    - jsonCodec
     - stringCodec
     - httpServer:
         automaticResponses: false
