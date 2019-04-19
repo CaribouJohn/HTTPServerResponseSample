@@ -1,0 +1,110 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    </head>
+    <body>
+        <h1 class="display-4">Simple HTTPServer plug-in request and response demo</h1>
+        <div class="card text-center">
+            <div class="card-body">
+              <h5 class="card-title">Current Mood</h5>
+              <p id="moodText" class="card-text">Unknown!</p>
+            </div>
+            <div id="moodCount" class="card-footer text-muted">
+              0
+            </div>
+        </div>
+        <div class="row justify-content-center">
+
+        <div class="card" style="width: 18rem;">
+                <div class="card-header">              
+                    <i class="fas fa-smile fa-4x"></i>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title">Send Event - Response type 1</h5>
+                  <p class="card-text">The button below will send an event to the correlator and the EPL will return event type 1.</p>
+                  <a class="btn btn-primary" onclick="sendHappyRequest()">Happy</a>
+                </div>
+        </div>
+        <div class="card" style="width: 18rem;">
+                <div class="card-header">              
+                        <i class="fas fa-frown fa-4x"></i>
+                    </div>
+                    <div class="card-body">
+                  <h5 class="card-title">Send Event - Response type 1</h5>
+                  <p class="card-text">The button below will send an event to the correlator and the EPL will return event type 1.</p>
+                  <a href="#" class="btn btn-primary" onclick="sendSadRequest()">Sad</a>
+                </div>
+        </div>
+        <div class="card" style="width: 18rem;">
+                <div class="card-header">              
+                        <i class="fas fa-angry fa-4x"></i>
+                    </div>
+                    <div class="card-body">
+                  <h5 class="card-title">Send Event - Response type 1</h5>
+                  <p class="card-text">The button below will send an event to the correlator and the EPL will return event type 1.</p>
+                  <a href="#" class="btn btn-primary" onclick="sendAngryRequest()">Angry!</a>
+                </div>
+        </div>
+    </div>
+
+    <div class="jumbotron">
+        <p class="lead">> uses <a href="https://getbootstrap.com/docs/4.1/getting-started/introduction/"> Bootstrap 4.1 for layout</a></p>
+        <p class="lead">> uses <a href="http://code.jquery.com/"> jQuery for ajax requests</a></p>
+        <p class="lead">> uses <a href="https://fontawesome.com/"> Font Awesome for graphics</a></p>
+        <hr class="my-4">
+        <ul>
+          <li>The 3 cards with buttons above allow you to send a message to the correlator. </li>
+
+          <li>the response will be displayed in the centered card.</li>
+</li>
+          <li>Each button sends the same request with a different mood Id, the EPL responds with a Success Event which </li>
+          contains a string representation of the Id and a count of the number of requests. </li>
+        </ul>
+    </div>
+
+    <script>
+        function sendHappyRequest() {
+          var response = sendRequest(0);
+        }
+
+        function sendSadRequest() {
+          var response = sendRequest(1);
+        }
+
+        function sendAngryRequest() {
+          var response = sendRequest(2);
+        }
+
+        function sendRequest(type) {
+          // Here we send an UpdateRule event to the correlator
+          // it triggers processing that will update the configuration
+          // and start the move of mails.
+          $.ajax({
+            beforeSend: function(xhrObj){
+                  xhrObj.setRequestHeader("Content-Type","application/json");
+              },
+              url: '/?type=MoodEvent&channel=requests', 
+              method: 'PUT', 
+              data: '{"moodId":"' + type + '"}', 
+              error: function(err,str,errThrown) {
+                var test = document.getElementById("moodText");
+                test.textContent = "ERROR!" + errThrown;
+              },
+              success: function(json,str) {
+                console.log(json);
+                var moodText = document.getElementById("moodText");
+                var test = document.getElementById("moodCount");
+                moodText.textContent = "Currently: " + json.message;
+                moodCount.textContent = json.count;
+              }
+          });
+        }
+    </script>
+
+    </body>
+</html>
