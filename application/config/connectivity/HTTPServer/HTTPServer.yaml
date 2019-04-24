@@ -3,12 +3,6 @@ connectivityPlugins:
   httpServer:
     libraryName: connectivity-http-server
     class: HTTPServer
-  mapperCodec:
-    libraryName: MapperCodec
-    class: MapperCodec
-  stringCodec:
-    libraryName: connectivity-string-codec
-    class: StringCodec
   diag:
     libraryName: DiagnosticCodec
     class: DiagnosticCodec
@@ -18,13 +12,9 @@ dynamicChainManagers:
     transport: httpServer
     managerConfig:
       port: ${HTTPServer_port}
-      staticFiles:
-             /swagger.json:
-                 file: ${PARENT_DIR}/swagger_HTTPServer.json
-                 contentType: application/json
-                 charset: UTF-8
+      staticFiles:     
              /index.html:
-                 file: html/index.html
+                 file: ${PARENT_DIR}/html/index.html
                  contentType: text/html
                  charset: UTF-8
 
@@ -51,5 +41,4 @@ dynamicChains:
     - stringCodec
     - httpServer:
         automaticResponses: false
-        responseTimeoutMs: 5000
         allowedMethods: [put]
